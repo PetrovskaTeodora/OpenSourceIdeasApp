@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.Services;
+using Application.Services.Interfaces;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;
@@ -12,12 +14,23 @@ namespace Application.Configurations
 {
   public static class DIModule
     {
-        public static IServiceCollection Register(IServiceCollection services, string connectionString)
+        public static IServiceCollection RegisterRepositories(this IServiceCollection services)
+        {
+            services.AddTransient<IIdeaRepository, IdeaRepository>();
+
+            return services;
+        }
+        public static IServiceCollection RegisterServices(this IServiceCollection services)
+        {
+            services.AddTransient<IIdeaService, IdeaService>();
+
+            return services;
+        }
+        public static IServiceCollection RegisterContext(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<OpenSourceIdeasDbContext>(options =>
                options.UseSqlServer(connectionString));
 
-            services.AddTransient<IIdeaRepository, IdeaRepository>();
 
             return services;
         }

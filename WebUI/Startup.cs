@@ -34,7 +34,11 @@ namespace WebUI
 
             var appSettings = appConfig.Get<AppSettings>();
 
-            DIModule.Register(services, appSettings.ConnectionString);
+            services.RegisterRepositories();
+            services.RegisterServices();
+            services.RegisterContext(appSettings.ConnectionString);
+
+            services.AddAutoMapper(typeof(MappingProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
