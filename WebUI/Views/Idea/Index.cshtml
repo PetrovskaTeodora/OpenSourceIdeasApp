@@ -1,0 +1,139 @@
+﻿@model IdeaHomeViewModel
+
+
+<h1>All ideas</h1>
+
+<button type="button" id="addNewIdea" class="btn btn-primary my-5" data-toggle="modal" data-target="#addNewIdeaModal">Add new Idea</button>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>TITLE</th>
+            <th>DESCRIPTION</th>
+            <th>UNIQUE CODE</th>
+            <th>ACTIONS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var idea in Model.ideasViewModel)
+        {
+            <tr>
+                <td>@idea.Title</td>
+                <td>@idea.Description</td>
+                <td>@idea.UniqueCode</td>
+                <td><a class="btn btn-danger" href="@Url.Action("DeleteIdea", "Idea", new { id=idea.Id})">Delete</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="addNewIdeaModal" tabindex="-1" role="dialog" aria-labelledby="addNewIdeaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewIdeaModalLabel">New Idea</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="title" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control validate" id="title">
+                        <div class="error-div text-danger"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <textarea class="form-control validate" id="description"></textarea>
+                        <div class="error-div text-danger"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="uniqueCode" class="col-form-label">Unique Code:</label>
+                        <input type="number" class="form-control validate" id="uniqueCode">
+                        <div class="error-div text-danger"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="add" class="btn btn-primary">Add</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+
+<script>
+
+        $(document).ready(function () {
+
+            $('#addNewIdeaModal').on('show.bs.modal', function (event) {
+                console.log(event.relatedTarget);
+                $('#add').on('click', function () {
+                    var isValid = true;
+                    var errElems = document.querySelectorAll(".error-div");
+                    errElems.forEach(function (el) {
+                        el.innerHTML = '';
+                    });
+
+                    var elements = document.querySelectorAll(".validate");
+                
+                    elements.forEach(function (el) {
+                        var str = el.value;
+                        if (!str || str.length === 0 ) {
+                            el.nextElementSibling.innerHTML = "The field is required."
+                            isValid = false;
+                        }
+                        if (el.getAttribute("id") == "title" && str && str.length<3) {
+                            el.nextElementSibling.innerHTML += "</br>The Title must be minimum 3 characters long!";
+                            isValid = false;
+                        }
+                    });
+
+                    if (isValid) {
+
+                    var data = {
+                        title: $("#title").val(),
+                        description: $("#description").val(),
+                        uniqueCode: $("#uniqueCode").val(),
+                    }
+
+                    $.ajax({
+				        type: "POST",
+				        url: "@Url.Action("AddNewIdea", "Idea")",
+				        contentType: "application/json; charset=utf-8",
+				        data: JSON.stringify(data)
+
+                    })
+                        .done(function (res) {
+                            if (res.status == "Success" && res.message != undefined) {
+                                $("#addNewIdeaModal").modal("hide");
+                                $.notify(res.message, "success");
+
+                                setTimeout(function () {
+                                    window.location = "@Url.Action("Index", "Idea")";
+                                }, 1000);
+
+                            }
+
+                            if (res.status == "Error" && res.message != undefined) {
+                                $.notify(res.message, "error");
+                            }
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            AlertDanger(jqXHR.responseText);
+                        })
+                    }
+
+                });
+
+
+            })
+        });
+
+</script>
+

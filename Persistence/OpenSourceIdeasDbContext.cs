@@ -15,5 +15,16 @@ namespace Persistence
 
         }
         public DbSet<Idea> Ideas { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Idea>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.Ideas)
+                .HasForeignKey(x => x.UserId);
+        }
     }
 }

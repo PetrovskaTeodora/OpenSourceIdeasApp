@@ -1,0 +1,43 @@
+﻿@model UserRegisterViewModel
+
+<h3 class="mb-5">Welcome to the Ideas App</h3>
+
+
+<form asp-action="Register" asp-controller="User" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class="mb-3 col-md-4 mr-5 ml-3">
+            <div class="row mb-2">
+                <label for="FirstName" class="form-label">FirstName</label>
+                <input asp-for="FirstName" type="text" class="form-control" id="FirstName">
+            </div>
+            <div class="row mb-2">
+                <label for="LastName" class="form-label">LastName</label>
+                <input asp-for="LastName" type="text" class="form-control" id="LastName">
+            </div>
+            <div class="row mb-2">
+                <label for="Username" class="form-label">Username</label>
+                <input asp-for="Username" type="text" class="form-control" id="Username">
+            </div>
+        </div>
+        <div class="mb-3 col-md-4  ml-5">
+            <div class="row mb-2">
+                <label for="Email" class="form-label">Email address</label>
+                <input asp-for="Email" type="email" class="form-control" id="Email" aria-describedby="emailHelp">
+            </div>
+            <div class="row mb-2">
+                <label for="Password" class="form-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control" id="Password">
+            </div>
+            <div class="row mb-2">
+                <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" id="ConfirmPassword">
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+
+<p class="mt-5">Already have an account? <a asp-action="Login" asp-controller="User">Please Login</a></p>

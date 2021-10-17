@@ -26,7 +26,7 @@ namespace WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             var appConfig = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appConfig);
@@ -38,7 +38,7 @@ namespace WebUI
             services.RegisterServices();
             services.RegisterContext(appSettings.ConnectionString);
 
-            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddAutoMapper(typeof(MappingProfile), typeof(Configurations.MappingProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
