@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebUI.Middlewares;
 
 namespace WebUI
 {
@@ -63,6 +64,9 @@ namespace WebUI
             app.UseRouting();
 
             app.UseAuthorization();
+
+            //ErrorLoggingMiddleware
+            app.UseMiddleware<ErrorLoggingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
