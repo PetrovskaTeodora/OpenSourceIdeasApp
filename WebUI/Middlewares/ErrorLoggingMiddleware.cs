@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Application.Services.Interfaces;
+using Application.Utilities;
+using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -13,9 +15,13 @@ namespace WebUI.Middlewares
         const string MessageTemplate = "HTTP {RequestMethod} {RequestPath} respond {StatusCode}";
         private readonly RequestDelegate _next;
         static readonly ILogger Log = Serilog.Log.ForContext<ErrorLoggingMiddleware>();
-        public ErrorLoggingMiddleware(RequestDelegate next)
+        private readonly string _token = "token";
+        private readonly IAuthenticationService _authenticationService;
+
+        public ErrorLoggingMiddleware(RequestDelegate next, IAuthenticationService authenticationService)
         {
             _next = next;
+            _authenticationService = authenticationService;
         }
 
         public async Task Invoke(HttpContext context)
@@ -23,7 +29,16 @@ namespace WebUI.Middlewares
             try
             {
                 //Log.Information($"Before Request: {context.Request.Path}. User: {context.User.Identity.Name}");
-                Log.Information($"Before Request: {context.Request.Path}");
+                var tokenFromCookie = context.Request.GetCookie(_token);
+                var userId = _authenticationService.GetUserIdFromToken(tokenFromCookie);
+                if (userId != Guid.Empty)
+                {
+                    Log.Information($"Before Request: {context.Request.Path}. User: {userId}");
+                }
+                else
+                {
+                    Log.Information($"Before Request: {context.Request.Path}. User: /");
+                }
                 await _next(context);
             }
             catch (Exception ex)
