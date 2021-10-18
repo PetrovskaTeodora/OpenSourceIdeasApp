@@ -1,5 +1,6 @@
 ﻿using Application.DTO_Models;
 using Application.Services.Interfaces;
+using Application.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,14 +15,22 @@ namespace WebUI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public UserController(IUserService userService, IMapper mapper)
+        private readonly IAuthenticationService _authenticationService;
+        private readonly string _token = "token";
+        public UserController(IUserService userService, IMapper mapper, IAuthenticationService authenticationService)
         {
             _userService = userService;
             _mapper = mapper;
+            _authenticationService = authenticationService;
         }
         [HttpGet]
         public IActionResult Login()
         {
+            var tokenFromCookie = Request.GetCookie(_token);
+            var userId = _authenticationService.GetUserIdFromToken(tokenFromCookie);
+
+            if (tokenFromCookie != "" && userId != Guid.Empty) return RedirectToAction("Index", "Idea");
+
             return View();
         }
 
@@ -41,12 +50,19 @@ namespace WebUI.Controllers
                 Desctiption="Ivalid username or password. Please try again!"
             });
 
+            Response.SetCookie(_token, user.Id);
+
             return RedirectToAction("Index", "Idea");
         }
 
         [HttpGet]
         public IActionResult Register()
         {
+            var tokenFromCookie = Request.GetCookie(_token);
+            var userId = _authenticationService.GetUserIdFromToken(tokenFromCookie);
+
+            if (tokenFromCookie != "" && userId != Guid.Empty) return RedirectToAction("Index", "Idea");
+
             return View();
         }
 
@@ -66,7 +82,16 @@ namespace WebUI.Controllers
                 Desctiption = "The user already exists! Please try again."
             });
 
+            Response.SetCookie(_token, user.Id);
             return RedirectToAction("Index", "Idea");
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete(_token);
+
+            return RedirectToAction("Login", "User");
         }
     }
 }

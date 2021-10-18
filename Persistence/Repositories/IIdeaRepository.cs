@@ -9,7 +9,7 @@ namespace Persistence
 {
     public interface IIdeaRepository
     {
-        List<Idea> GetAll();
+        List<Idea> GetAll(Guid userId);
         Idea GetById(Guid id);
         int Insert(Idea idea);
         int Update(Idea idea);

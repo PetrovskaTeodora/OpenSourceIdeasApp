@@ -16,9 +16,9 @@ namespace Persistence
             _context = context;
         }
 
-        public List<Idea> GetAll()
+        public List<Idea> GetAll(Guid userId)
         {
-            return _context.Ideas.ToList();
+            return _context.Ideas.Where(x=>x.UserId==userId).ToList();
         }
 
         public Idea GetById(Guid id)
@@ -28,6 +28,9 @@ namespace Persistence
 
         public int Insert(Idea idea)
         {
+            var ideaWithSameUniqueCode = _context.Ideas.Where(x => x.UniqueCode == idea.UniqueCode && x.UserId == idea.UserId).FirstOrDefault();
+            if (ideaWithSameUniqueCode != null) return -1;
+
             idea.DateCreated = DateTime.UtcNow;
             _context.Ideas.Add(idea);
             return _context.SaveChanges();
@@ -35,6 +38,9 @@ namespace Persistence
 
         public int Update(Idea idea)
         {
+            var ideaWithSameUniqueCode = _context.Ideas.Where(x => x.UniqueCode == idea.UniqueCode);
+            if (ideaWithSameUniqueCode != null) return -1;
+
             var entity = _context.Ideas.FirstOrDefault(x => x.Id == idea.Id);
 
             if (entity == null) return -1;

@@ -32,9 +32,9 @@ namespace Application.Services
 
         }
 
-        public IEnumerable<IdeaDTO> GetAll()
+        public IEnumerable<IdeaDTO> GetAll(Guid userId)
         {
-            return _mapper.Map<IEnumerable<IdeaDTO>>(_ideaRepository.GetAll());
+            return _mapper.Map<IEnumerable<IdeaDTO>>(_ideaRepository.GetAll(userId));
         }
 
         public IdeaDTO GetById(Guid id)

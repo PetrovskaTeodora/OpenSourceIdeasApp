@@ -12,8 +12,17 @@ namespace WebUI.Configurations
     {
         public MappingProfile()
         {
-            CreateMap<IdeaViewModel,IdeaDTO>()
-                .ReverseMap();
+            CreateMap<IdeaViewModel, IdeaDTO>()
+                .ForMember(dest => dest.Id, x => x.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Title, x => x.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Description, x => x.MapFrom(src => src.Description))
+                .ForMember(dest => dest.UniqueCode, x => x.MapFrom(src => src.UniqueCode))
+                .ForMember(dest => dest.UserId, x => x.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.Id, x => x.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Title, x => x.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Description, x => x.MapFrom(src => src.Description))
+                .ForMember(dest => dest.UniqueCode, x => x.MapFrom(src => src.UniqueCode));
 
             CreateMap<UserLoginViewModel, UserDTO>()
                 .ForMember(dest => dest.Email, x => x.MapFrom(src => src.Email))
@@ -38,6 +47,7 @@ namespace WebUI.Configurations
                 .ForMember(dest => dest.FirstName, x => x.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, x => x.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.ConfirmPassword, x => x.Ignore());
+
 
         }
     }

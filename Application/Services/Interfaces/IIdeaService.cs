@@ -9,7 +9,7 @@ namespace Application.Services.Interfaces
 {
     public interface IIdeaService
     {
-        IEnumerable<IdeaDTO> GetAll();
+        IEnumerable<IdeaDTO> GetAll(Guid userId);
         IdeaDTO GetById(Guid id);
         bool Add(IdeaDTO idea);
         bool Update(IdeaDTO idea);

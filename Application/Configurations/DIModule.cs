@@ -26,6 +26,7 @@ namespace Application.Configurations
         {
             services.AddTransient<IIdeaService, IdeaService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
 
             return services;
         }
